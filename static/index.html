@@ -36,8 +36,6 @@
                     <h3>Register page</h3>
                     <form id="register">
                       <fieldset>
-                        <label for="name">name</label>
-                        <input type="text" name="name">
                         <label for="username">username</label>
                         <input type="text" name="username">
                         <input class="button-primary" type="submit" value="Register">
@@ -62,16 +60,6 @@
                     <a href="#" id="toRegistration">Not registered yet? Registration</a>
                 </div>
             </div>
-
-            <div class="column" id="mainContainer">
-
-                <div class="secretcontainer">
-                    <h3>Hey <span id="name"></span>!</h3>
-                    <div id="theSecret"></div>
-                    <button id="logoutButton">Logout</button>
-                </div>
-            </div>
-
         </div>
     </div>
 
@@ -79,15 +67,11 @@
     <script src="js/utils.js"></script>
     <script src="js/base64url-arraybuffer.js"></script>
     <script src="js/view.js"></script>
-    <script src="js/password.auth.js"></script>
     <script src="js/webauthn.auth.js"></script>
     <script>
         $(document).ready(() => {
-            checkIfLoggedIn()
-            .then((response) => {
-                if(response)
-                    return loadMainContainer()
-            })
+            $('#registerContainer').show();
+            $('#loginContainer').show();
         })
     </script>
 </body>
