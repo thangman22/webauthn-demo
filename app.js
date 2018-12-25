@@ -7,8 +7,6 @@ const path          = require('path');
 const crypto        = require('crypto');
 
 const config        = require('./config.json');
-const defaultroutes = require('./routes/default');
-const passwordauth  = require('./routes/password');
 const webuathnauth  = require('./routes/webauthn.js');
 
 const app           = express();
