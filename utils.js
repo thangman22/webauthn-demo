@@ -54,7 +54,11 @@ let generateServerMakeCredRequest = (username, displayName, id) => {
             name: username,
             displayName: displayName
         },
-
+        authenticatorSelection:{
+            authenticatorAttachment: "platform",
+            requireResidentKey: false,
+            userVerification: "required"
+        },
         attestation: 'direct',
 
         pubKeyCredParams: [

@@ -105,6 +105,7 @@ router.post('/response', (request, response) => {
     }
 
     let result;
+    
     if(webauthnResp.response.attestationObject !== undefined) {
         /* This is create cred */
         result = utils.verifyAuthenticatorAttestationResponse(webauthnResp);
