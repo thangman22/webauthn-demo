@@ -4,6 +4,7 @@ const cbor = require('cbor')
 const jsrsasign = require('jsrsasign')
 const elliptic = require('elliptic')
 const nodersa = require('node-rsa')
+const helpers = require('./helpers')
 
 let COSEKEYS = {
   'kty': 1,
@@ -48,17 +49,12 @@ var COSEALGHASH = {
   '-260': 'sha256',
   '-261': 'sha512',
   '-7': 'sha256',
-  '-36': 'sha384',
-  '-37': 'sha512'
-}
-
-let hash = (alg, message) => {
-  return crypto.createHash(alg).update(message).digest()
+  '-36': 'sha384'
 }
 
 let base64ToPem = (b64cert) => {
   let pemcert = ''
-  for (let i = 0; i < b64cert.length; i += 64) { pemcert += b64cert.slice(i, i + 64) + '\n'}
+  for (let i = 0; i < b64cert.length; i += 64) { pemcert += b64cert.slice(i, i + 64) + '\n' }
 
   return '-----BEGIN CERTIFICATE-----\n' + pemcert + '-----END CERTIFICATE-----'
 }
@@ -120,7 +116,7 @@ let verifyPackedAttestation = (webAuthnResponse) => {
 
   let authDataStruct = parseAuthData(attestationStruct.authData)
 
-  let clientDataHashBuf = hash('sha256', base64url.toBuffer(webAuthnResponse.response.clientDataJSON))
+  let clientDataHashBuf = helpers.hash('sha256', base64url.toBuffer(webAuthnResponse.response.clientDataJSON))
   let signatureBaseBuffer = Buffer.concat([attestationStruct.authData, clientDataHashBuf])
 
   let signatureBuffer = attestationStruct.attStmt.sig
@@ -131,17 +127,17 @@ let verifyPackedAttestation = (webAuthnResponse) => {
     let leafCert = base64ToPem(attestationStruct.attStmt.x5c[0].toString('base64'))
     let certInfo = getCertificateInfo(leafCert)
 
-    if (certInfo.subject.OU !== 'Authenticator Attestation') { throw new Error('Batch certificate OU MUST be set strictly to "Authenticator Attestation"!')}
+    if (certInfo.subject.OU !== 'Authenticator Attestation') { throw new Error('Batch certificate OU MUST be set strictly to "Authenticator Attestation"!') }
 
-    if (!certInfo.subject.CN) { throw new Error('Batch certificate CN MUST no be empty!')}
+    if (!certInfo.subject.CN) { throw new Error('Batch certificate CN MUST no be empty!') }
 
-    if (!certInfo.subject.O) { throw new Error('Batch certificate CN MUST no be empty!')}
+    if (!certInfo.subject.O) { throw new Error('Batch certificate CN MUST no be empty!') }
 
-    if (!certInfo.subject.C || certInfo.subject.C.length !== 2) { throw new Error('Batch certificate C MUST be set to two character ISO 3166 code!')}
+    if (!certInfo.subject.C || certInfo.subject.C.length !== 2) { throw new Error('Batch certificate C MUST be set to two character ISO 3166 code!') }
 
-    if (certInfo.basicConstraintsCA) { throw new Error('Batch certificate basic constraints CA MUST be false!')}
+    if (certInfo.basicConstraintsCA) { throw new Error('Batch certificate basic constraints CA MUST be false!') }
 
-    if (certInfo.version !== 3) { throw new Error('Batch certificate version MUST be 3(ASN1 2)!')}
+    if (certInfo.version !== 3) { throw new Error('Batch certificate version MUST be 3(ASN1 2)!') }
 
     signatureIsValid = crypto.createVerify('sha256')
       .update(signatureBaseBuffer)
@@ -158,7 +154,7 @@ let verifyPackedAttestation = (webAuthnResponse) => {
 
       let ansiKey = Buffer.concat([Buffer.from([0x04]), x, y])
 
-      let signatureBaseHash = hash(COSEALGHASH[pubKeyCose.get(COSEKEYS.alg)], signatureBaseBuffer)
+      let signatureBaseHash = helpers.hash(COSEALGHASH[pubKeyCose.get(COSEKEYS.alg)], signatureBaseBuffer)
 
       let ec = new elliptic.ec(COSECRV[pubKeyCose.get(COSEKEYS.crv)])
       let key = ec.keyFromPublic(ansiKey)
@@ -174,7 +170,7 @@ let verifyPackedAttestation = (webAuthnResponse) => {
       signatureIsValid = key.verify(signatureBaseBuffer, signatureBuffer)
     } else if (pubKeyCose.get(COSEKEYS.kty) === COSEKTY.OKP) {
       let x = pubKeyCose.get(COSEKEYS.x)
-      let signatureBaseHash = hash(COSEALGHASH[pubKeyCose.get(COSEKEYS.alg)], signatureBaseBuffer)
+      let signatureBaseHash = helpers.hash(COSEALGHASH[pubKeyCose.get(COSEKEYS.alg)], signatureBaseBuffer)
 
       let key = new elliptic.eddsa('ed25519')
       key.keyFromPublic(x)
@@ -184,7 +180,7 @@ let verifyPackedAttestation = (webAuthnResponse) => {
     /* ----- Verify SURROGATE attestation ENDS ----- */
   }
 
-  if (!signatureIsValid) { throw new Error('Failed to verify the signature!')}
+  if (!signatureIsValid) { throw new Error('Failed to verify the signature!') }
 
   return true
 }

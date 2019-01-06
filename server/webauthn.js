@@ -1,15 +1,15 @@
 const express = require('express')
-const utils = require('../utils')
+const utils = require('./utils')
 const config = require('../config.json')
 const base64url = require('base64url')
 const router = express.Router()
 const database = require('./db')
 
 router.post('/register', (request, response) => {
-  if (!request.body || !request.body.username || !request.body.name) {
+  if (!request.body || !request.body.username || !request.body.name || !request.body.type) {
     response.json({
       'status': 'failed',
-      'message': 'Request missing name or username field!'
+      'message': 'Request field is missing'
     })
 
     return
@@ -17,7 +17,7 @@ router.post('/register', (request, response) => {
 
   let username = request.body.username
   let name = request.body.name
-
+  let type = request.body.type
   if (database[username] && database[username].registered) {
     response.json({
       'status': 'failed',
@@ -34,7 +34,7 @@ router.post('/register', (request, response) => {
     'authenticators': []
   }
 
-  let challengeMakeCred = utils.generateServerMakeCredRequest(username, name, database[username].id, request.body.isPlatform)
+  let challengeMakeCred = utils.generateServerMakeCredRequest(username, name, database[username].id, type)
   challengeMakeCred.status = 'ok'
 
   request.session.challenge = challengeMakeCred.challenge
@@ -113,8 +113,6 @@ router.post('/response', (request, response) => {
     if (result.verified) {
       database[request.session.username].authenticators.push(result.authrInfo)
       database[request.session.username].registered = true
-      console.log('\n-------------- Infomation in database --------------')
-      console.log(database)
     }
   } else if (webauthnResp.response.authenticatorData !== undefined) {
     /* This is get assertion */
