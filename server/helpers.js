@@ -1,6 +1,11 @@
 const crypto = require('crypto')
 const cbor = require('cbor')
 
+/**
+ * Create hash follow alg
+ * @param  {String} alg
+ * @param  {String} message
+ */
 let hash = (alg, message) => {
   return crypto.createHash(alg).update(message).digest()
 }

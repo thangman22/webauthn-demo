@@ -108,6 +108,10 @@ let hash = (data) => {
   return crypto.createHash('SHA256').update(data).digest()
 }
 
+/**
+ * Verify creadential from client
+ * @param  {Object} webAuthnResponse - Data from navigator.credentials.create
+ */
 let verifyAuthenticatorAttestationResponse = (webAuthnResponse) => {
   let attestationBuffer = base64url.toBuffer(webAuthnResponse.response.attestationObject)
   let ctapMakeCredResp = cbor.decodeAllSync(attestationBuffer)[0]
@@ -161,7 +165,10 @@ let parseGetAssertAuthData = (buffer) => {
 
   return { rpIdHash, flagsBuf, flags, counter, counterBuf }
 }
-
+/**
+ * @param  {Object} webAuthnResponse - Data from navigator.credentials.get
+ * @param  {Object} authenticators - Credential from Database
+ */
 let verifyAuthenticatorAssertionResponse = (webAuthnResponse, authenticators) => {
   let authr = findAuthr(webAuthnResponse.id, authenticators)
   let authenticatorData = base64url.toBuffer(webAuthnResponse.response.authenticatorData)
