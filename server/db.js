@@ -1,3 +1,3 @@
-let database = {};
+let database = {}
 
-module.exports = database;
+module.exports = database

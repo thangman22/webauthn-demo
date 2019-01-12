@@ -49,16 +49,18 @@ window.$('#register').submit(function (event) {
 
   getMakeCredentialsChallenge({ username, name, type })
     .then((response) => {
+      console.log('Options for creating crendential', response)
       let publicKey = window.preformatMakeCredReq(response)
       return navigator.credentials.create({ publicKey })
     })
     .then((response) => {
       let makeCredResponse = window.publicKeyCredentialToJSON(response)
+      console.log('Credential', makeCredResponse)
       return sendWebAuthnResponse(makeCredResponse)
     })
     .then((response) => {
       if (response.status === 'ok') {
-        console.log('Credential is saved')
+        console.log('Credential is in server')
       } else {
         window.alert(`Server responed with error. The message is: ${response.message}`)
       }
@@ -101,6 +103,7 @@ window.$('#login').submit(function (event) {
     })
     .then((response) => {
       let getAssertionResponse = window.publicKeyCredentialToJSON(response)
+      console.log(getAssertionResponse)
       return sendWebAuthnResponse(getAssertionResponse)
     })
     .then((response) => {
