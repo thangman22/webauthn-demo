@@ -3,13 +3,20 @@
   "version": "0.0.1",
   "description": "",
   "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
   "dependencies": {
     "base64url": "^2.0.0",
     "body-parser": "^1.15.2",
     "cbor": "^3.0.3",
     "cookie-parser": "^1.4.3",
     "cookie-session": "^2.0.0-beta.3",
-    "express": "^4.15.4"
+    "elliptic": "^6.4.1",
+    "express": "^4.15.4",
+    "jsrsasign": "^8.0.12",
+    "node-rsa": "^1.0.2",
+    "nodemon": "^1.18.9"
   },
   "repository": {
     "type": "git",
@@ -21,5 +28,13 @@
     "url": "https://github.com/fido-alliance//issues",
     "email": "yuriy@fidoalliance.org"
   },
-  "homepage": "https://github.com/fido-alliance/#readme"
+  "homepage": "https://github.com/fido-alliance/#readme",
+  "devDependencies": {
+    "eslint": "^5.12.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0"
+  }
 }
