@@ -1,7 +1,5 @@
 'use strict'
 
-<<<<<<< HEAD
-=======
 let getMakeCredentialsChallenge = (formBody) => {
   return window.fetch('/webauthn/register', {
     method: 'POST',
@@ -117,4 +115,3 @@ window.$('#login').submit(function (event) {
     })
     .catch((error) => window.alert(error))
 })
->>>>>>> completed-demo
