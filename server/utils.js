@@ -3,6 +3,9 @@ const base64url = require('base64url')
 const cbor = require('cbor')
 const verifyPackedWebauthn = require('./verify.packed.webauthn')
 const verifyFidoU2fWebauthn = require('./verify.fidou2f.webauthn')
+const verifyAndroidSafetynetWebauthn = require('./verify.android-safetynet.webauthn')
+const verifyAndroidKeyWebauthn = require('./verify.android-key.webauthn')
+
 const helpers = require('./helpers')
 
 /**
@@ -125,12 +128,21 @@ let verifyAuthenticatorAttestationResponse = (webAuthnResponse) => {
   // TODO: STEP 13 Extract public key
   let publicKey = helpers.COSEECDHAtoPKCS(authrDataStruct.COSEPublicKey)
   let response = { 'verified': false }
-
+  console.log('---------------------- ctapMakeCredResp ---------------------')
+  console.log(ctapMakeCredResp)
+  console.log('---------------------- authrDataStruct ---------------------')
+  console.log(authrDataStruct)
+  console.log('---------------------- publicKey ---------------------')
+  console.log(publicKey)
   // TODO: STEP 14 Verify attestation based on type of device
   if (ctapMakeCredResp.fmt === 'fido-u2f') {
     response.verified = verifyFidoU2fWebauthn.verifyFidoU2fAttestation(webAuthnResponse)
   } else if (ctapMakeCredResp.fmt === 'packed') {
     response.verified = verifyPackedWebauthn.verifyPackedAttestation(webAuthnResponse)
+  } else if (ctapMakeCredResp.fmt === 'android-key') {
+    response.verified = verifyAndroidKeyWebauthn.verifyPackedAttestation(webAuthnResponse)
+  } else if (ctapMakeCredResp.fmt === 'android-safetynet') {
+    response.verified = verifyAndroidSafetynetWebauthn.verifyPackedAttestation(webAuthnResponse)
   }
 
   if (response.verified) {
