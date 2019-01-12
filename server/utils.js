@@ -43,14 +43,17 @@ let randomBase64URLBuffer = (len) => {
  * @param  {String} id             - user's base64url encoded id
  * @return {MakePublicKeyCredentialOptions} - server encoded make credentials request
  */
-let generateServerMakeCredRequest = (username, displayName, id, type) => {
+let generateServerCredentialsChallenge = (username, displayName, id, type) => {
+  // TODO: STEP 2 Genarate Credential Challenge
   let authenticatorSelection = null
   if (type === 'cross-platform') {
+    // TODO: STEP 3.1 add this for security key
     authenticatorSelection = {
       authenticatorAttachment: 'cross-platform',
       requireResidentKey: false
     }
   } else if (type === 'platform') {
+    // TODO: STEP 3.2 Add this for finger print
     authenticatorSelection = {
       authenticatorAttachment: 'platform',
       requireResidentKey: false,
@@ -86,6 +89,7 @@ let generateServerMakeCredRequest = (username, displayName, id, type) => {
  */
 let generateServerGetAssertion = (authenticators) => {
   let allowCredentials = []
+  // TODO: STEP 19 Return allow credential ID
   for (let authr of authenticators) {
     allowCredentials.push({
       type: 'public-key',
@@ -114,11 +118,15 @@ let hash = (data) => {
  */
 let verifyAuthenticatorAttestationResponse = (webAuthnResponse) => {
   let attestationBuffer = base64url.toBuffer(webAuthnResponse.response.attestationObject)
+  // TODO: STEP 11 Extract attestation Object
   let ctapMakeCredResp = cbor.decodeAllSync(attestationBuffer)[0]
+  // TODO: STEP 12 Extract auth data
   let authrDataStruct = helpers.parseMakeCredAuthData(ctapMakeCredResp.authData)
+  // TODO: STEP 13 Extract public key
   let publicKey = helpers.COSEECDHAtoPKCS(authrDataStruct.COSEPublicKey)
   let response = { 'verified': false }
 
+  // TODO: STEP 14 Verify attestation based on type of device
   if (ctapMakeCredResp.fmt === 'fido-u2f') {
     response.verified = verifyFidoU2fWebauthn.verifyFidoU2fAttestation(webAuthnResponse)
   } else if (ctapMakeCredResp.fmt === 'packed') {
@@ -126,6 +134,7 @@ let verifyAuthenticatorAttestationResponse = (webAuthnResponse) => {
   }
 
   if (response.verified) {
+    // TODO: STEP 15 Create data for save to database
     response.authrInfo = {
       fmt: ctapMakeCredResp.fmt,
       publicKey: base64url.encode(publicKey),
@@ -170,21 +179,24 @@ let parseGetAssertAuthData = (buffer) => {
  * @param  {Object} authenticators - Credential from Database
  */
 let verifyAuthenticatorAssertionResponse = (webAuthnResponse, authenticators) => {
+  // TODO: STEP 24 Query public key base on user ID
   let authr = findAuthr(webAuthnResponse.id, authenticators)
   let authenticatorData = base64url.toBuffer(webAuthnResponse.response.authenticatorData)
 
   let response = { 'verified': false }
-
+  // TODO: STEP 25 parse auth data
   let authrDataStruct = parseGetAssertAuthData(authenticatorData)
 
   if (!(authrDataStruct.flags & U2F_USER_PRESENTED)) { throw new Error('User was NOT presented durring authentication!') }
-
+  // TODO: STEP 26 hash clientDataJSON with sha256
   let clientDataHash = hash(base64url.toBuffer(webAuthnResponse.response.clientDataJSON))
+  // TODO: STEP 27 create signature base by concat authenticatorData and clientDataHash
   let signatureBase = Buffer.concat([authenticatorData, clientDataHash])
-
+  // TODO: STEP 28 format public key
   let publicKey = helpers.ASN1toPEM(base64url.toBuffer(authr.publicKey))
+  // TODO: STEP 29 convert signature to buffer
   let signature = base64url.toBuffer(webAuthnResponse.response.signature)
-
+  // TODO: STEP 30 verify signature
   response.verified = verifySignature(signature, signatureBase, publicKey)
 
   if (response.verified) {
@@ -198,7 +210,7 @@ let verifyAuthenticatorAssertionResponse = (webAuthnResponse, authenticators) =>
 
 module.exports = {
   randomBase64URLBuffer,
-  generateServerMakeCredRequest,
+  generateServerCredentialsChallenge,
   generateServerGetAssertion,
   verifyAuthenticatorAttestationResponse,
   verifyAuthenticatorAssertionResponse

@@ -35,7 +35,7 @@ let sendWebAuthnResponse = (body) => {
 }
 
 /* Handle for register form submission */
-window.$('#register').submit(function (event) {
+document.getElementById('register').addEventListener('submit', function (event) {
   event.preventDefault()
 
   let username = this.username.value
@@ -47,20 +47,28 @@ window.$('#register').submit(function (event) {
     return
   }
 
+  // TODO: STEP 1 request createCredentialObject from server
   getMakeCredentialsChallenge({ username, name, type })
     .then((response) => {
       console.log('Options for creating crendential', response)
+      // TODO: STEP 5 convert challenge & id to buffer and perform register
       let publicKey = window.preformatMakeCredReq(response)
+      clearAlert()
+      document.getElementById('touch-alert').style.display = 'block'
       return navigator.credentials.create({ publicKey })
     })
     .then((response) => {
+      // TODO: STEP 6 convert response from buffer to json
       let makeCredResponse = window.publicKeyCredentialToJSON(response)
       console.log('Credential', makeCredResponse)
+      // TODO: STEP 7 Send to server
       return sendWebAuthnResponse(makeCredResponse)
     })
     .then((response) => {
       if (response.status === 'ok') {
-        console.log('Credential is in server')
+        clearAlert()
+        document.getElementById('register-success-alert').style.display = 'block'
+        console.log('Registration completed')
       } else {
         window.alert(`Server responed with error. The message is: ${response.message}`)
       }
@@ -69,6 +77,7 @@ window.$('#register').submit(function (event) {
 })
 
 let getGetAssertionChallenge = (formBody) => {
+  // TODO: STEP 17 Start login flow
   return window.fetch('/webauthn/login', {
     method: 'POST',
     credentials: 'include',
@@ -85,8 +94,14 @@ let getGetAssertionChallenge = (formBody) => {
     })
 }
 
+let clearAlert = () => {
+  Array.from(document.getElementsByClassName('alert')).forEach(ele => {
+    ele.style.display = 'none'
+  })
+}
+
 /* Handle for login form submission */
-window.$('#login').submit(function (event) {
+document.getElementById('login').addEventListener('submit', function (event) {
   event.preventDefault()
 
   let username = this.username.value
@@ -98,17 +113,24 @@ window.$('#login').submit(function (event) {
 
   getGetAssertionChallenge({ username })
     .then((response) => {
+      // TODO: STEP 20 perform get credential
       let publicKey = window.preformatGetAssertReq(response)
+      clearAlert()
+      document.getElementById('touch-alert').style.display = 'block'
       return navigator.credentials.get({ publicKey })
     })
     .then((response) => {
+      // TODO: STEP 21 convert response to json
       let getAssertionResponse = window.publicKeyCredentialToJSON(response)
-      console.log(getAssertionResponse)
+      console.log('Assertion', getAssertionResponse)
+      // TODO: STEP 22 send information to server
       return sendWebAuthnResponse(getAssertionResponse)
     })
     .then((response) => {
       if (response.status === 'ok') {
-        console.log('Credential is saved')
+        clearAlert()
+        document.getElementById('login-success-alert').style.display = 'block'
+        console.log('Login success')
       } else {
         window.alert(`Server responed with error. The message is: ${response.message}`)
       }

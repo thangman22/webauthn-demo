@@ -34,9 +34,9 @@ router.post('/register', (request, response) => {
     'authenticators': []
   }
 
-  let challengeMakeCred = utils.generateServerMakeCredRequest(username, name, database[username].id, type)
+  let challengeMakeCred = utils.generateServerCredentialsChallenge(username, name, database[username].id, type)
   challengeMakeCred.status = 'ok'
-
+  // TODO: STEP 4 Save challenge to Session or Cookie
   request.session.challenge = challengeMakeCred.challenge
   request.session.username = username
 
@@ -63,7 +63,7 @@ router.post('/login', (request, response) => {
 
     return
   }
-
+  // TODO: STEP 18 Genrate assertion
   let getAssertion = utils.generateServerGetAssertion(database[username].authenticators)
   getAssertion.status = 'ok'
 
@@ -88,7 +88,7 @@ router.post('/response', (request, response) => {
   let webauthnResp = request.body
   let clientData = JSON.parse(base64url.decode(webauthnResp.response.clientDataJSON))
 
-  /* Check challenge... */
+  // TODO: STEP 8 Verify challenge is match with cookie
   if (clientData.challenge !== request.session.challenge) {
     response.json({
       'status': 'failed',
@@ -96,7 +96,7 @@ router.post('/response', (request, response) => {
     })
   }
 
-  /* ...and origin */
+  // TODO: STEP 9 Verify origin is match
   if (clientData.origin !== config.origin) {
     response.json({
       'status': 'failed',
@@ -107,15 +107,15 @@ router.post('/response', (request, response) => {
   let result
 
   if (webauthnResp.response.attestationObject !== undefined) {
-    /* This is create cred */
+    // TODO: STEP 10 Verify attestation
     result = utils.verifyAuthenticatorAttestationResponse(webauthnResp)
-
+    // TODO: STEP 16 Save data to database
     if (result.verified) {
       database[request.session.username].authenticators.push(result.authrInfo)
       database[request.session.username].registered = true
     }
   } else if (webauthnResp.response.authenticatorData !== undefined) {
-    /* This is get assertion */
+    // TODO: STEP 23 Verify assertion
     result = utils.verifyAuthenticatorAssertionResponse(webauthnResp, database[request.session.username].authenticators)
   } else {
     response.json({

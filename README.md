@@ -1,13 +1,13 @@
-# FIDO Alliance WebAuthn demo
+# WebAuthn demo
 
-Slides: https://slides.com/fidoalliance/jan-2018-fido-seminar-webauthn-tutorial#/
+This is demo for Web Authentication API. This demo is contain description of each step, Please follow TODO for read description of each step 
+
+This demo is fork from https://github.com/fido-alliance/webauthn-demo.
 
 ### Requirements
 
 - Firefox Nightly
 - Nodejs + NPM
-- Text editor
-
 ### Run
 
 - `git clone https://github.com/fido-alliance/webauthn-demo/`

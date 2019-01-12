@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <title>Web Authentication demo </title>
     <link rel="stylesheet" href="css/milligram.min.css">
     <style>
+        .column {
+            height: 350px;
+        }
         html, body, .container, .row {
             height: 100%;
         }
@@ -22,15 +25,27 @@
             padding: 15px;
         }
 
-        #registerContainer, #mainContainer {
-            display: none;
+        .alert {
+            padding: 20px;
+            color: white;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .alert.info {
+            background: #2196F3;
+        }
+        .alert.success {
+            background-color: #4CAF50;
         }
     </style>
 </head>
 <body>
+    <div class="alert info" style="display: none;" id="touch-alert"><strong>Touch</strong> your Authentication device</div>
+    <div class="alert success" style="display: none;" id="register-success-alert"><strong>Registration</strong> completed</div>
+    <div class="alert success" style="display: none;" id="login-success-alert"><strong>Login</strong> success</div>
+
     <div class="container">
         <div class="row row-center">
-
             <div class="column" id="registerContainer">
                 <div class="formcontainer register">
                     <h3>Register page</h3>
@@ -38,7 +53,7 @@
                       <fieldset>
                         <label for="username">username</label>
                         <input type="text" name="username">
-                        <input type="radio" name="type" value="platform"> Platform (Finger print, Machine authn)<br>
+                        <span id="platform-support" style="display: none;"><input type="radio" name="type" value="platform"> Platform (Finger print, Machine authn)<br></span>
                         <input type="radio" name="type" value="cross-platform" checked="checked"> Cross Platform (Security key)<br>
                         <input class="button-primary" type="submit" value="Register">
                       </fieldset>
@@ -60,16 +75,16 @@
             </div>
         </div>
     </div>
-
-    <script src="js/jquery-3.2.1.min.js"></script>
     <script src="js/helpers.js"></script>
     <script src="js/base64url-arraybuffer.js"></script>
     <script src="js/webauthn.auth.js"></script>
     <script>
-        $(document).ready(() => {
-            $('#registerContainer').show();
-            $('#loginContainer').show();
-        })
+    document.addEventListener('DOMContentLoaded', async function () {
+        let platformAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+        if (platformAvailable) {
+            document.getElementById('platform-support').style.display = 'block'
+        }
+    })
     </script>
 </body>
 </html>
