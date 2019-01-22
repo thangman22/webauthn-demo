@@ -1,4 +1,4 @@
-# WebAuthn demo
+# Web Authentication API demo
 
 This is demo for Web Authentication API. This demo is contain description of each step, Please follow TODO for read description of each step
 
