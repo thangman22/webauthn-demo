@@ -1,0 +1,7 @@
+{
+    "name": "Web Authentication API demo",
+    "description": "This is demo for Web Authentication API. This demo is contain description of each step",
+    "repository": "https://github.com/thangman22/webauthn-demo",
+    "keywords": ["node", "express", "webauthn"],
+    "image": "heroku/nodejs"
+  }
