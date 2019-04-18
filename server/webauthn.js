@@ -95,7 +95,7 @@ router.post('/response', (request, response) => {
       'message': 'Challenges don\'t match!'
     })
   }
-
+  console.log(clientData.origin, config.origin)
   // TODO: STEP 9 Verify origin is match
   if (clientData.origin !== config.origin) {
     response.json({
