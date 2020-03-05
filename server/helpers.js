@@ -39,7 +39,7 @@ let ASN1toPEM = (pkBuffer) => {
   if (!Buffer.isBuffer(pkBuffer)) { throw new Error('ASN1toPEM: pkBuffer must be Buffer.') }
 
   let type
-  if (pkBuffer.length == 65 && pkBuffer[0] == 0x04) {
+  if (pkBuffer.length === 65 && pkBuffer[0] === 0x04) {
     /*
               If needed, we encode rawpublic key to ASN structure, adding metadata:
               SEQUENCE {

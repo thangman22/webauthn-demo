@@ -103,22 +103,6 @@ var parseAuthData = (buffer) => {
   return { rpIdHash, flagsBuf, flags, counter, counterBuf, aaguid, credID, COSEPublicKey }
 }
 
-var getCertificateSubject = (certificate) => {
-  let subjectCert = new jsrsasign.X509()
-  subjectCert.readCertPEM(certificate)
-
-  let subjectString = subjectCert.getSubjectString()
-  let subjectFields = subjectString.slice(1).split('/')
-
-  let fields = {}
-  for (let field of subjectFields) {
-    let kv = field.split('=')
-    fields[kv[0]] = kv[1]
-  }
-
-  return fields
-}
-
 var validateCertificatePath = (certificates) => {
   if ((new Set(certificates)).size !== certificates.length) { throw new Error('Failed to validate certificates path! Dublicate certificates detected!') }
 

@@ -3,8 +3,9 @@ const base64url = require('base64url')
 const cbor = require('cbor')
 const jsrsasign = require('jsrsasign')
 const elliptic = require('elliptic')
-const nodersa = require('node-rsa')
 const helpers = require('./helpers')
+
+require('node-rsa')
 
 let COSEKEYS = {
   'kty': 1,

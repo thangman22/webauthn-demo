@@ -46,22 +46,13 @@ let randomBase64URLBuffer = (len) => {
  * @param  {String} id             - user's base64url encoded id
  * @return {MakePublicKeyCredentialOptions} - server encoded make credentials request
  */
-let generateServerCredentialsChallenge = (username, displayName, id, type) => {
+let generateServerCredentialsChallenge = (username, displayName, id) => {
   // TODO: STEP 2 Genarate Credential Challenge
   let authenticatorSelection = null
-  if (type === 'cross-platform') {
-    // TODO: STEP 3.1 add this for security key
-    authenticatorSelection = {
-      authenticatorAttachment: 'cross-platform',
-      requireResidentKey: false
-    }
-  } else if (type === 'platform') {
-    // TODO: STEP 3.2 Add this for finger print
-    authenticatorSelection = {
-      authenticatorAttachment: 'platform',
-      requireResidentKey: false,
-      userVerification: 'required'
-    }
+
+  authenticatorSelection = {
+    requireResidentKey: false,
+    userVerification: 'required'
   }
 
   return {

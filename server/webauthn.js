@@ -6,7 +6,7 @@ const router = express.Router()
 const database = require('./db')
 
 router.post('/register', (request, response) => {
-  if (!request.body || !request.body.username || !request.body.name || !request.body.type) {
+  if (!request.body || !request.body.username || !request.body.name) {
     response.json({
       'status': 'failed',
       'message': 'Request field is missing'
@@ -17,7 +17,6 @@ router.post('/register', (request, response) => {
 
   let username = request.body.username
   let name = request.body.name
-  let type = request.body.type
   if (database[username] && database[username].registered) {
     response.json({
       'status': 'failed',
@@ -34,7 +33,7 @@ router.post('/register', (request, response) => {
     'authenticators': []
   }
 
-  let challengeMakeCred = utils.generateServerCredentialsChallenge(username, name, database[username].id, type)
+  let challengeMakeCred = utils.generateServerCredentialsChallenge(username, name, database[username].id)
   challengeMakeCred.status = 'ok'
   // TODO: STEP 4 Save challenge to Session or Cookie
   request.session.challenge = challengeMakeCred.challenge
@@ -95,12 +94,12 @@ router.post('/response', (request, response) => {
       'message': 'Challenges don\'t match!'
     })
   }
-  console.log(clientData.origin, config.origin)
+  console.log(` Origin ${clientData.origin}`)
   // TODO: STEP 9 Verify origin is match
   if (clientData.origin !== config.origin) {
     response.json({
       'status': 'failed',
-      'message': 'Origins don\'t match!'
+      'message': 'The Origins does not match!'
     })
   }
 

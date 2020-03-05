@@ -56,8 +56,6 @@
                       <fieldset>
                         <label for="username">username</label>
                         <input type="text" name="username">
-                        <span id="platform-support" style="display: none;"><input type="radio" name="type" value="platform"> Platform (Finger print, Machine authn)<br></span>
-                        <input type="radio" name="type" value="cross-platform" checked="checked"> Cross Platform (Security key)<br>
                         <input class="button-primary" type="submit" value="Register">
                       </fieldset>
                     </form>
@@ -81,13 +79,5 @@
     <script src="js/helpers.js"></script>
     <script src="js/base64url-arraybuffer.js"></script>
     <script src="js/webauthn.auth.js"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', async function () {
-        let platformAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
-        if (platformAvailable) {
-            document.getElementById('platform-support').style.display = 'block'
-        }
-    })
-    </script>
 </body>
 </html>
